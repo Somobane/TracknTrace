@@ -22,9 +22,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	
-	"time"
 	"math/rand"
+	"time"
+	"strconv"
 	"encoding/json"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	
@@ -134,8 +134,13 @@ func (t *TnT) createAssembly(stub shim.ChaincodeStubInterface, args []string) ([
 if len(args) != 11 {
 			return nil, fmt.Errorf("Incorrect number of arguments. Expecting 11. Got: %d.", len(args))
 		}
+		//var columns []shim.Column
+		//_assemblyId:= rand.New(rand.NewSource(99)).Int31
+
+		//Generate the AssemblyId
+		rand.Seed(time.Now().Unix())
 		
-		_assemblyId:= string(rand.New(rand.NewSource(99)).Int31())
+		_assemblyId := strconv.Itoa(rand.Int())
 		_deviceSerialNo:= args[0]
 		_deviceType:=args[1]
 		_FilamentBatchId:=args[2]
@@ -148,7 +153,7 @@ if len(args) != 11 {
 		_ManufacturingPlant:=args[9]
 		_AssemblyStatus:= args[10]
 
-		_time:= time.Now()
+		_time:= time.Now().Local()
 
 		_AssemblyCreationDate := _time.Format(time.RFC3339)
 		_AssemblyLastUpdateOn := _time.Format(time.RFC3339)
