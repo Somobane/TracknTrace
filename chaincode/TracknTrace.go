@@ -239,9 +239,9 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 
 		_time:= time.Now().Local()
 
-		_AssemblyCreationDate := row.Columns[13].GetString_()
+		_AssemblyCreationDate := row.Columns[12].GetString_()
 		_AssemblyLastUpdateOn := _time.Format(time.RFC3339)
-		_AssemblyCreatedBy :=  row.Columns[15].GetString_()
+		_AssemblyCreatedBy :=  row.Columns[14].GetString_()
 		_AssemblyLastUpdatedBy := ""
 
 		// Insert a row
@@ -358,17 +358,15 @@ func (t *TnT) getAssemblyByID(stub shim.ChaincodeStubInterface, args []string) (
 func (t *TnT) getAllAssemblyByStatus(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {	
 
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting AssemblyLineID to query")
+		return nil, errors.New("Incorrect number of arguments. Expecting Assmebly Status to query")
 	}
 
 	_AssemblyStatus := args[0]
 	
-
 	// Get the row pertaining to this status
 	var columns []shim.Column
 	col1 := shim.Column{Value: &shim.Column_String_{String_: _AssemblyStatus}}
 	columns = append(columns, col1)
-	
 	
 	rows, err := stub.GetRows("AssemblyLine", columns)
 	if err != nil {
