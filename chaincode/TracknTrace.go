@@ -192,6 +192,90 @@ if len(args) != 11 {
 
 }
 
+//Update AssemblyLine status
+func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
+	if len(args) != 12 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 12.")
+	} 
+	
+	_assemblyId := args[0]
+	
+
+	// Get the row pertaining to this Assembly Id
+	var columns []shim.Column
+	col1 := shim.Column{Value: &shim.Column_String_{String_: _assemblyId}}
+	columns = append(columns, col1)
+
+	row, err := stub.GetRow("AssemblyLine", columns)
+	if err != nil {
+		return nil, fmt.Errorf("Error: Failed retrieving AssemblyLine with Assemblyid %s. Error %s",_assemblyId, err.Error())
+	}
+	// GetRows returns empty message if key does not exist
+	if len(row.Columns) == 0 {
+		return nil, nil
+	}
+
+	// Delete the row pertaining to this assemblyLineId
+	err = stub.DeleteRow(
+		"Assemblyline",
+		columns,
+	)
+	if err != nil {
+		return nil, errors.New("Failed deleting row.")
+	}
+	
+		_deviceSerialNo:= args[1]
+		_deviceType:=args[2]
+		_FilamentBatchId:=args[3]
+		_LedBatchId:=args[4]
+		_CircuitBoardBatchId:=args[5]
+		_WireBatchId:=args[6]
+		_CasingBatchId:=args[7]
+		_AdaptorBatchId:=args[8]
+		_StickPodBatchId:=args[9]
+		_ManufacturingPlant:=args[10]
+		_AssemblyStatus:= args[11]
+
+		_time:= time.Now().Local()
+
+		_AssemblyCreationDate := row.Columns[13].GetString_()
+		_AssemblyLastUpdateOn := _time.Format(time.RFC3339)
+		_AssemblyCreatedBy :=  row.Columns[15].GetString_()
+		_AssemblyLastUpdatedBy := ""
+
+		// Insert a row
+		ok, err := stub.InsertRow("AssemblyLine", shim.Row{
+			Columns: []*shim.Column{
+				&shim.Column{Value: &shim.Column_String_{String_: _assemblyId}},
+				&shim.Column{Value: &shim.Column_String_{String_: _deviceSerialNo}},
+				&shim.Column{Value: &shim.Column_String_{String_: _deviceType}},
+				&shim.Column{Value: &shim.Column_String_{String_: _FilamentBatchId}},
+				&shim.Column{Value: &shim.Column_String_{String_: _LedBatchId}},
+				&shim.Column{Value: &shim.Column_String_{String_: _CircuitBoardBatchId}},
+				&shim.Column{Value: &shim.Column_String_{String_: _WireBatchId}},
+				&shim.Column{Value: &shim.Column_String_{String_: _CasingBatchId}},
+				&shim.Column{Value: &shim.Column_String_{String_: _AdaptorBatchId}},
+				&shim.Column{Value: &shim.Column_String_{String_: _StickPodBatchId}},
+				&shim.Column{Value: &shim.Column_String_{String_: _ManufacturingPlant}},
+				&shim.Column{Value: &shim.Column_String_{String_: _AssemblyStatus}},
+				&shim.Column{Value: &shim.Column_String_{String_: _AssemblyCreationDate}},
+				&shim.Column{Value: &shim.Column_String_{String_: _AssemblyLastUpdateOn}},
+				&shim.Column{Value: &shim.Column_String_{String_: _AssemblyCreatedBy}},
+				&shim.Column{Value: &shim.Column_String_{String_: _AssemblyLastUpdatedBy}},
+			}})
+
+		if err != nil {
+			return nil, err 
+		}
+		if !ok && err == nil {
+			return nil, errors.New("Row already exists in Assemblyline.")
+		}
+		
+	return nil, nil
+
+}
+
 //get all AssemblyLines
 func (t *TnT) getAllAssembly(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {	
 var columns []shim.Column
@@ -270,6 +354,59 @@ func (t *TnT) getAssemblyByID(stub shim.ChaincodeStubInterface, args []string) (
 
 }
 
+//get all Assembly by status
+func (t *TnT) getAllAssemblyByStatus(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {	
+
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting AssemblyLineID to query")
+	}
+
+	_AssemblyStatus := args[0]
+	
+
+	// Get the row pertaining to this status
+	var columns []shim.Column
+	col1 := shim.Column{Value: &shim.Column_String_{String_: _AssemblyStatus}}
+	columns = append(columns, col1)
+	
+	
+	rows, err := stub.GetRows("AssemblyLine", columns)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve row")
+	}
+		
+	res2E:= []*AssemblyLine{}	
+	
+	for row := range rows {		
+		newApp:= new(AssemblyLine)
+		newApp.AssemblyId = row.Columns[0].GetString_()
+		newApp.DeviceSerialNo = row.Columns[1].GetString_()
+		newApp.DeviceType = row.Columns[2].GetString_()
+		newApp.FilamentBatchId = row.Columns[3].GetString_()
+		newApp.LedBatchId = row.Columns[4].GetString_()
+		newApp.CircuitBoardBatchId = row.Columns[5].GetString_()
+		newApp.WireBatchId = row.Columns[6].GetString_()
+		newApp.CasingBatchId = row.Columns[7].GetString_()
+		newApp.AdaptorBatchId = row.Columns[8].GetString_()
+		newApp.StickPodBatchId  = row.Columns[9].GetString_()
+		newApp.ManufacturingPlant  = row.Columns[10].GetString_()
+		newApp.AssemblyStatus  = row.Columns[11].GetString_()
+		newApp.AssemblyCreationDate  = row.Columns[12].GetString_()
+		newApp.AssemblyLastUpdatedOn  = row.Columns[13].GetString_()
+		newApp.AssemblyCreatedBy  = row.Columns[14].GetString_()
+		newApp.AssemblyLastUpdatedBy  = row.Columns[15].GetString_()
+		if len(newApp.AssemblyId) > 0{
+		res2E=append(res2E,newApp)		
+		}				
+	}
+	
+    mapB, _ := json.Marshal(res2E)
+    fmt.Println(string(mapB))
+	
+	return mapB, nil
+
+}
+
 
 // Invoke callback representing the invocation of a chaincode
 func (t *TnT) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
@@ -282,11 +419,10 @@ func (t *TnT) Invoke(stub shim.ChaincodeStubInterface, function string, args []s
 	} else if function == "createAssembly" {
 		fmt.Printf("Function is createAssembly")
 		return t.createAssembly(stub, args)
+	} else if function == " updateAssemblyByID" {
+		fmt.Printf("Function is updateAssemblyLineStatus")
+		return t.updateAssemblyByID(stub, args)
 	} 
-	//else if function == "updateAssemblyLineStatus" {
-	//	fmt.Printf("Function is updateAssemblyLineStatus")
-	//	return t.updateAssemblyLineStatus(stub, args)
-	//} 
 
 	return nil, errors.New("Received unknown function invocation")
 }
@@ -296,10 +432,10 @@ func (t *TnT) Invoke(stub shim.ChaincodeStubInterface, function string, args []s
 func (t *TnT) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Printf("Query called, determining function")
 
-	//if function == "getAssemblyLineStatus" { 
-		//t := TnT{}
-		//return t.getAssemblyLineStatus(stub, args)
-	//} else 
+	if function == "getAllAssemblyByStatus" { 
+		t := TnT{}
+		return t.getAllAssemblyByStatus(stub, args)
+	} else 
 	if function == "getAssemblyByID" { 
 		t := TnT{}
 		return t.getAssemblyByID(stub, args)
