@@ -417,8 +417,8 @@ func (t *TnT) Invoke(stub shim.ChaincodeStubInterface, function string, args []s
 	} else if function == "createAssembly" {
 		fmt.Printf("Function is createAssembly")
 		return t.createAssembly(stub, args)
-	} else if function == " updateAssemblyByID" {
-		fmt.Printf("Function is updateAssemblyLineStatus")
+	} else if function == "updateAssemblyByID" {
+		fmt.Printf("Function is updateAssemblyByID")
 		return t.updateAssemblyByID(stub, args)
 	} 
 
