@@ -187,7 +187,48 @@ if len(args) != 11 {
 
 }
 
+//get all AssemblyLines
+func (t *TnT) getAllAssembly(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {	
+var columns []shim.Column
 
+	rows, err := stub.GetRows("AssemblyLine", columns)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to retrieve row")
+	}
+ 
+   
+		
+	res2E:= []*AssemblyLine{}	
+	
+	for row := range rows {		
+		newApp:= new(AssemblyLine)
+		newApp.AssemblyId = row.Columns[0].GetString_()
+		newApp.DeviceSerialNo = row.Columns[1].GetString_()
+		newApp.DeviceType = row.Columns[2].GetString_()
+		newApp.FilamentBatchId = row.Columns[3].GetString_()
+		newApp.LedBatchId = row.Columns[4].GetString_()
+		newApp.CircuitBoardBatchId = row.Columns[5].GetString_()
+		newApp.WireBatchId = row.Columns[6].GetString_()
+		newApp.CasingBatchId = row.Columns[7].GetString_()
+		newApp.AdaptorBatchId = row.Columns[8].GetString_()
+		newApp.StickPodBatchId  = row.Columns[9].GetString_()
+		newApp.ManufacturingPlant  = row.Columns[10].GetString_()
+		newApp.AssemblyStatus  = row.Columns[11].GetString_()
+		newApp.AssemblyCreationDate  = row.Columns[12].GetString_()
+		newApp.AssemblyLastUpdatedOn  = row.Columns[13].GetString_()
+		newApp.AssemblyCreatedBy  = row.Columns[14].GetString_()
+		newApp.AssemblyLastUpdatedBy  = row.Columns[15].GetString_()
+		if len(newApp.AssemblyId) > 0{
+		res2E=append(res2E,newApp)		
+		}				
+	}
+	
+    mapB, _ := json.Marshal(res2E)
+    fmt.Println(string(mapB))
+	
+	return mapB, nil
+
+}
 
 //get the Assembly against ID
 func (t *TnT) getAssemblyByID(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -257,11 +298,10 @@ func (t *TnT) Query(stub shim.ChaincodeStubInterface, function string, args []st
 	if function == "getAssemblyByID" { 
 		t := TnT{}
 		return t.getAssemblyByID(stub, args)
-	} 
-	//else if function == "getAllAssemblyLines" { 
-		//t := TnT{}
-		//return t.getAllAssemblyLines(stub, args)
-	//}
+	}else if function == "getAllAssembly" { 
+		t := TnT{}
+		return t.getAllAssembly(stub, args)
+	}
 	
 	return nil, errors.New("Received unknown function query")
 }
