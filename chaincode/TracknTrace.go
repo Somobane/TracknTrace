@@ -419,26 +419,39 @@ func (t *TnT) getAssemblyByID(stub shim.ChaincodeStubInterface, args []string) (
 
 	_assemblyId := args[0]
 	
-
-	// Get the row pertaining to this assemblyID
 	var columns []shim.Column
-	col1 := shim.Column{Value: &shim.Column_String_{String_: _assemblyId}}
-	columns = append(columns, col1)
-
-	row, err := stub.GetRow("AssemblyLine", columns)
+	
+	rows, err := stub.GetRows("AssemblyLine", columns)
 	if err != nil {
-		jsonResp := "{\"Error\":\"Failed to get the data for the assembly " + _assemblyId + "\"}"
-		return nil, errors.New(jsonResp)
+		return nil, fmt.Errorf("Failed to retrieve row")
 	}
-
-	// GetRows returns empty message if key does not exist
-	if len(row.Columns) == 0 {
-		jsonResp := "{\"Error\":\"Failed to get the data for the assembly " + _assemblyId + "\"}"
-		return nil, errors.New(jsonResp)
+		
+	res2E:= []*AssemblyLine{}	
+	
+	for row := range rows {		
+		newApp:= new(AssemblyLine)
+		newApp.AssemblyId = row.Columns[0].GetString_()
+		newApp.DeviceSerialNo = row.Columns[1].GetString_()
+		newApp.DeviceType = row.Columns[2].GetString_()
+		newApp.FilamentBatchId = row.Columns[3].GetString_()
+		newApp.LedBatchId = row.Columns[4].GetString_()
+		newApp.CircuitBoardBatchId = row.Columns[5].GetString_()
+		newApp.WireBatchId = row.Columns[6].GetString_()
+		newApp.CasingBatchId = row.Columns[7].GetString_()
+		newApp.AdaptorBatchId = row.Columns[8].GetString_()
+		newApp.StickPodBatchId  = row.Columns[9].GetString_()
+		newApp.ManufacturingPlant  = row.Columns[10].GetString_()
+		newApp.AssemblyStatus  = row.Columns[11].GetString_()
+		newApp.AssemblyCreationDate  = row.Columns[12].GetString_()
+		newApp.AssemblyLastUpdatedOn  = row.Columns[13].GetString_()
+		newApp.AssemblyCreatedBy  = row.Columns[14].GetString_()
+		newApp.AssemblyLastUpdatedBy  = row.Columns[15].GetString_()
+		// Get the row pertaining to this assemblyID
+		if newApp.AssemblyId == _assemblyId{
+			res2E=append(res2E,newApp)		
+		}			
 	}
-
-	//return []byte (row), nil
-	 mapB, _ := json.Marshal(row)
+	 mapB, _ := json.Marshal(res2E)
     fmt.Println(string(mapB))
 	
 	return mapB, nil
@@ -456,8 +469,6 @@ func (t *TnT) getAllAssemblyByStatus(stub shim.ChaincodeStubInterface, args []st
 	
 	// Get the row pertaining to this status
 	var columns []shim.Column
-	//col1 := shim.Column{Value: &shim.Column_String_{String_: _AssemblyStatus}}
-	//columns = append(columns, col1)
 	
 	rows, err := stub.GetRows("AssemblyLine", columns)
 	if err != nil {
@@ -520,7 +531,7 @@ func (t *TnT) getAllPackage(stub shim.ChaincodeStubInterface, args []string) ([]
 		newApp.PackageCreatedBy = row.Columns[8].GetString_()
 		newApp.PackageLastUpdatedBy  = row.Columns[9].GetString_()
 		if len(newApp.CaseId) > 0{
-		res2E=append(res2E,newApp)		
+			res2E=append(res2E,newApp)		
 		}				
 	}
 	
@@ -539,27 +550,33 @@ func (t *TnT) getPackageByID(stub shim.ChaincodeStubInterface, args []string) ([
 	}
 
 	_caseId := args[0]
-	
-
-	// Get the row pertaining to this assemblyID
 	var columns []shim.Column
-	col1 := shim.Column{Value: &shim.Column_String_{String_: _caseId}}
-	columns = append(columns, col1)
-
-	row, err := stub.GetRow("PackageLine", columns)
+	rows, err := stub.GetRows("PackageLine", columns)
 	if err != nil {
-		jsonResp := "{\"Error\":\"Failed to get the data for the assembly " + _caseId + "\"}"
-		return nil, errors.New(jsonResp)
+		return nil, fmt.Errorf("Failed to retrieve row")
 	}
-
-	// GetRows returns empty message if key does not exist
-	if len(row.Columns) == 0 {
-		jsonResp := "{\"Error\":\"Failed to get the data for the assembly " + _caseId + "\"}"
-		return nil, errors.New(jsonResp)
+		res2E:= []*PackageLine{}	
+	
+	for row := range rows {		
+		newApp:= new(PackageLine)
+		newApp.CaseId = row.Columns[0].GetString_()
+		newApp.HolderAssemblyId = row.Columns[1].GetString_()
+		newApp.ChargerAssemblyId = row.Columns[2].GetString_()
+		newApp.PackageStatus = row.Columns[3].GetString_()
+		newApp.PackagingDate = row.Columns[4].GetString_()
+		newApp.ShippingToAddress = row.Columns[5].GetString_()
+		newApp.PackageCreationDate = row.Columns[6].GetString_()
+		newApp.PackageLastUpdatedOn = row.Columns[7].GetString_()
+		newApp.PackageCreatedBy = row.Columns[8].GetString_()
+		newApp.PackageLastUpdatedBy  = row.Columns[9].GetString_()
+		// Get the row pertaining to this caseId
+		if newApp.CaseId == _caseId	{
+		res2E=append(res2E,newApp)		
+		}				
 	}
 
 	//return []byte (row), nil
-	 mapB, _ := json.Marshal(row)
+	 mapB, _ := json.Marshal(res2E)
     fmt.Println(string(mapB))
 	
 	return mapB, nil
