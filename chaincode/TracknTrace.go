@@ -155,8 +155,8 @@ if len(args) != 11 {
 
 		_time:= time.Now().Local()
 
-		_AssemblyCreationDate := _time.Format(time.RFC3339)
-		_AssemblyLastUpdateOn := _time.Format(time.RFC3339)
+		_AssemblyCreationDate := _time.Format("2006-01-02")
+		_AssemblyLastUpdateOn := _time.Format("2006-01-02")
 		_AssemblyCreatedBy := ""
 		_AssemblyLastUpdatedBy := ""
 
@@ -216,15 +216,6 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 		return nil, nil
 	}
 
-	// Delete the row pertaining to this assemblyId
-	err = stub.DeleteRow(
-		"Assemblyline",
-		columns,
-	)
-	if err != nil {
-		return nil, errors.New("Failed deleting row.")
-	}
-	
 		_deviceSerialNo:= args[1]
 		_deviceType:=args[2]
 		_FilamentBatchId:=args[3]
@@ -240,9 +231,18 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 		_time:= time.Now().Local()
 
 		_AssemblyCreationDate := row.Columns[12].GetString_()
-		_AssemblyLastUpdateOn := _time.Format(time.RFC3339)
+		_AssemblyLastUpdateOn := _time.Format("2006-01-02")
 		_AssemblyCreatedBy :=  row.Columns[14].GetString_()
 		_AssemblyLastUpdatedBy := ""
+
+		// Delete the row pertaining to this assemblyId
+		err = stub.DeleteRow(
+			"Assemblyline",
+			columns,
+		)
+		if err != nil {
+			return nil, errors.New("Failed deleting row.")
+		}
 
 		// Insert a row
 		ok, err := stub.InsertRow("AssemblyLine", shim.Row{
