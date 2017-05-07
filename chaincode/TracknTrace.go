@@ -199,15 +199,7 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 		return nil, errors.New("Incorrect number of arguments. Expecting 12.")
 	} 
 	
-	_assemblyId := args[0]
-	
-
-	// Get the row pertaining to this Assembly Id
-	var columns []shim.Column
-	col1 := shim.Column{Value: &shim.Column_String_{String_: _assemblyId}}
-	columns = append(columns, col1)
-
-	
+		_assemblyId := args[0]
 		_deviceSerialNo:= args[1]
 		_deviceType:=args[2]
 		_FilamentBatchId:=args[3]
@@ -227,6 +219,11 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 		_AssemblyCreatedBy :=  args[13]
 		_AssemblyLastUpdatedBy := ""
 
+
+		// Get the row pertaining to this Assembly Id
+		var columns []shim.Column
+		col1 := shim.Column{Value: &shim.Column_String_{String_: _assemblyId}}
+		columns = append(columns, col1)
 		// Delete the row pertaining to this assemblyId
 		err := stub.DeleteRow(
 			"Assemblyline",
@@ -237,7 +234,7 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 		}
 
 		// Insert a row
-		ok, err := stub.InsertRow("AssemblyLine", shim.Row{
+		ok, error_ := stub.InsertRow("AssemblyLine", shim.Row{
 			Columns: []*shim.Column{
 				&shim.Column{Value: &shim.Column_String_{String_: _assemblyId}},
 				&shim.Column{Value: &shim.Column_String_{String_: _deviceSerialNo}},
@@ -257,10 +254,10 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 				&shim.Column{Value: &shim.Column_String_{String_: _AssemblyLastUpdatedBy}},
 			}})
 
-		if err != nil {
+		if error_ != nil {
 			return nil, err 
 		}
-		if !ok && err == nil {
+		if !ok && error_ == nil {
 			return nil, errors.New("Row already exists in Assemblyline.")
 		}
 		
