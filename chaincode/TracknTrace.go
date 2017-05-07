@@ -195,7 +195,7 @@ if len(args) != 11 {
 //Update AssemblyLine status
 func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
-	if len(args) != 12 {
+	if len(args) != 14 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 12.")
 	} 
 	
@@ -207,15 +207,7 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 	col1 := shim.Column{Value: &shim.Column_String_{String_: _assemblyId}}
 	columns = append(columns, col1)
 
-	row, err := stub.GetRow("AssemblyLine", columns)
-	if err != nil {
-		return nil, fmt.Errorf("Error: Failed retrieving AssemblyLine with Assemblyid %s. Error %s",_assemblyId, err.Error())
-	}
-	// GetRows returns empty message if key does not exist
-	if len(row.Columns) == 0 {
-		return nil, nil
-	}
-
+	
 		_deviceSerialNo:= args[1]
 		_deviceType:=args[2]
 		_FilamentBatchId:=args[3]
@@ -230,13 +222,13 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 
 		_time:= time.Now().Local()
 
-		_AssemblyCreationDate := row.Columns[12].GetString_()
+		_AssemblyCreationDate := args[12]
 		_AssemblyLastUpdateOn := _time.Format("2006-01-02")
-		_AssemblyCreatedBy :=  row.Columns[14].GetString_()
+		_AssemblyCreatedBy :=  args[13]
 		_AssemblyLastUpdatedBy := ""
 
 		// Delete the row pertaining to this assemblyId
-		err = stub.DeleteRow(
+		err := stub.DeleteRow(
 			"Assemblyline",
 			columns,
 		)
@@ -393,7 +385,7 @@ func (t *TnT) getAllAssemblyByStatus(stub shim.ChaincodeStubInterface, args []st
 		newApp.AssemblyLastUpdatedOn  = row.Columns[13].GetString_()
 		newApp.AssemblyCreatedBy  = row.Columns[14].GetString_()
 		newApp.AssemblyLastUpdatedBy  = row.Columns[15].GetString_()
-		if newApp.AssemblyId == _AssemblyStatus{
+		if newApp.AssemblyStatus == _AssemblyStatus{
 		res2E=append(res2E,newApp)		
 		}			
 	}
