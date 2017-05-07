@@ -216,7 +216,7 @@ func (t *TnT) updateAssemblyByID(stub shim.ChaincodeStubInterface, args []string
 		return nil, nil
 	}
 
-	// Delete the row pertaining to this assemblyLineId
+	// Delete the row pertaining to this assemblyId
 	err = stub.DeleteRow(
 		"Assemblyline",
 		columns,
@@ -365,8 +365,8 @@ func (t *TnT) getAllAssemblyByStatus(stub shim.ChaincodeStubInterface, args []st
 	
 	// Get the row pertaining to this status
 	var columns []shim.Column
-	col1 := shim.Column{Value: &shim.Column_String_{String_: _AssemblyStatus}}
-	columns = append(columns, col1)
+	//col1 := shim.Column{Value: &shim.Column_String_{String_: _AssemblyStatus}}
+	//columns = append(columns, col1)
 	
 	rows, err := stub.GetRows("AssemblyLine", columns)
 	if err != nil {
@@ -393,9 +393,9 @@ func (t *TnT) getAllAssemblyByStatus(stub shim.ChaincodeStubInterface, args []st
 		newApp.AssemblyLastUpdatedOn  = row.Columns[13].GetString_()
 		newApp.AssemblyCreatedBy  = row.Columns[14].GetString_()
 		newApp.AssemblyLastUpdatedBy  = row.Columns[15].GetString_()
-		if len(newApp.AssemblyId) > 0{
+		if newApp.AssemblyId == _AssemblyStatus{
 		res2E=append(res2E,newApp)		
-		}				
+		}			
 	}
 	
     mapB, _ := json.Marshal(res2E)
