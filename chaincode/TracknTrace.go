@@ -116,6 +116,7 @@ func (t *TnT) Init(stub shim.ChaincodeStubInterface, function string, args []str
 		&shim.ColumnDefinition{Name: "chargerAssemblyId", Type: shim.ColumnDefinition_STRING, Key: false},
 		&shim.ColumnDefinition{Name: "packageStatus", Type: shim.ColumnDefinition_STRING, Key: false},
 		&shim.ColumnDefinition{Name: "packagingDate", Type: shim.ColumnDefinition_STRING, Key: false},
+		&shim.ColumnDefinition{Name: "packagingCreationDate", Type: shim.ColumnDefinition_STRING, Key: false},
 		&shim.ColumnDefinition{Name: "packageLastUpdateOn", Type: shim.ColumnDefinition_STRING, Key: false},
 		&shim.ColumnDefinition{Name: "shippingToAddress", Type: shim.ColumnDefinition_STRING, Key: false},
 		&shim.ColumnDefinition{Name: "packageCreatedBy", Type: shim.ColumnDefinition_STRING, Key: false},
@@ -292,9 +293,9 @@ func (t *TnT) createPackage(stub shim.ChaincodeStubInterface, args []string) ([]
 				&shim.Column{Value: &shim.Column_String_{String_: _chargerAssemblyId}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageStatus}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packagingDate}},
-				&shim.Column{Value: &shim.Column_String_{String_: _shippingtoAddress}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageCreationDate}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageLastUpdateOn}},
+				&shim.Column{Value: &shim.Column_String_{String_: _shippingtoAddress}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageCreatedBy}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageLastUpdatedBy}},	
 		}})
@@ -345,14 +346,14 @@ func (t *TnT) updatePackageByCaseID(stub shim.ChaincodeStubInterface, args []str
 		// Insert a row
 		ok, _error := stub.InsertRow("PackageLine", shim.Row{
 			Columns: []*shim.Column{
-				&shim.Column{Value: &shim.Column_String_{String_: _caseId}},
+			&shim.Column{Value: &shim.Column_String_{String_: _caseId}},
 				&shim.Column{Value: &shim.Column_String_{String_: _holderAssemblyId}},
 				&shim.Column{Value: &shim.Column_String_{String_: _chargerAssemblyId}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageStatus}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packagingDate}},
-				&shim.Column{Value: &shim.Column_String_{String_: _shippingtoAddress}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageCreationDate}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageLastUpdateOn}},
+				&shim.Column{Value: &shim.Column_String_{String_: _shippingtoAddress}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageCreatedBy}},
 				&shim.Column{Value: &shim.Column_String_{String_: _packageLastUpdatedBy}},
 			}})
@@ -525,9 +526,9 @@ func (t *TnT) getAllPackage(stub shim.ChaincodeStubInterface, args []string) ([]
 		newApp.ChargerAssemblyId = row.Columns[2].GetString_()
 		newApp.PackageStatus = row.Columns[3].GetString_()
 		newApp.PackagingDate = row.Columns[4].GetString_()
-		newApp.ShippingToAddress = row.Columns[5].GetString_()
-		newApp.PackageCreationDate = row.Columns[6].GetString_()
-		newApp.PackageLastUpdatedOn = row.Columns[7].GetString_()
+		newApp.PackageCreationDate = row.Columns[5].GetString_()
+		newApp.PackageLastUpdatedOn = row.Columns[6].GetString_()
+		newApp.ShippingToAddress = row.Columns[7].GetString_()
 		newApp.PackageCreatedBy = row.Columns[8].GetString_()
 		newApp.PackageLastUpdatedBy  = row.Columns[9].GetString_()
 		if len(newApp.CaseId) > 0{
@@ -564,9 +565,9 @@ func (t *TnT) getPackageByID(stub shim.ChaincodeStubInterface, args []string) ([
 		newApp.ChargerAssemblyId = row.Columns[2].GetString_()
 		newApp.PackageStatus = row.Columns[3].GetString_()
 		newApp.PackagingDate = row.Columns[4].GetString_()
-		newApp.ShippingToAddress = row.Columns[5].GetString_()
-		newApp.PackageCreationDate = row.Columns[6].GetString_()
-		newApp.PackageLastUpdatedOn = row.Columns[7].GetString_()
+		newApp.PackageCreationDate = row.Columns[5].GetString_()
+		newApp.PackageLastUpdatedOn = row.Columns[6].GetString_()
+		newApp.ShippingToAddress = row.Columns[7].GetString_()
 		newApp.PackageCreatedBy = row.Columns[8].GetString_()
 		newApp.PackageLastUpdatedBy  = row.Columns[9].GetString_()
 		// Get the row pertaining to this caseId
